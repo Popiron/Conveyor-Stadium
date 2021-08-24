@@ -44,3 +44,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/keystore
+
+# Generated
+**/*.freezed.dart
+**/*.g.dart
+**/*.config.dart
+**/*.gr.dart
+
+.vscode/launch.json
+.vscode/tasks.json
