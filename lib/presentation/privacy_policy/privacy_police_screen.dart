@@ -14,18 +14,16 @@ class PrivacyPolicyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Background(
-        child: CustomScrollView(
-          slivers: [
-            SliverSafeArea(
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [],
-                ),
+      body: CustomScrollView(
+        slivers: [
+          SliverSafeArea(
+            sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                [],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

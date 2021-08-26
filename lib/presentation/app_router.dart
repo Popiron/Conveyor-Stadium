@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:conveyor_stadium/presentation/gameplay/gameplay_screen.dart';
 
 import 'menu/menu_screen.dart';
 import 'privacy_policy/privacy_police_screen.dart';
@@ -12,6 +13,9 @@ import 'privacy_policy/privacy_police_screen.dart';
     AdaptiveRoute(
       page: MenuScreen,
       initial: true,
+    ),
+    AdaptiveRoute(
+      page: GamePlayScreen,
     ),
   ],
 )
