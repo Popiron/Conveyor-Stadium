@@ -1,4 +1,5 @@
 import 'package:conveyor_stadium/domain/blocs/game_session/game_session_bloc.dart';
+import 'package:conveyor_stadium/presentation/gameplay/widgets/score_box.dart';
 import 'package:flutter/widgets.dart';
 import 'package:conveyor_stadium/presentation/common/widget_list_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,42 +27,20 @@ class _GameBarState extends State<GameBar> {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _scoreBox(score: value.gameSession.score),
+              ScoreBox(
+                score: value.gameSession.score,
+                size: 50,
+                textStyle: TypographyUtil.smallText.highlighted(),
+              ),
               _heartsBox(countHearts: value.gameSession.hearts),
             ],
           );
-        }, finished: (value) {
+        }, over: (value) {
           return Container();
         });
       },
     );
   }
-}
-
-Widget _scoreBox({required int score}) {
-  return Container(
-    height: 50,
-    width: 50,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        Image.asset(
-          "assets/images/score_border.png",
-          fit: BoxFit.contain,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: FittedBox(
-            fit: BoxFit.fitWidth,
-            child: Text(
-              score.toString(),
-              style: TypographyUtil.smallText.highlighted(),
-            ),
-          ),
-        )
-      ],
-    ),
-  );
 }
 
 Widget _heartsBox({required int countHearts}) {

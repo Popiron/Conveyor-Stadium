@@ -9,7 +9,7 @@ class GameSession with _$GameSession {
   const factory GameSession(
       {required int score,
       required int hearts,
-      required List<Fan> fans,
+      required List<Fan?> fans,
       required List<Stadium> stadiums}) = _GameSession;
 
   const GameSession._();

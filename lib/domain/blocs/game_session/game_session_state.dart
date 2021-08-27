@@ -5,5 +5,5 @@ class GameSessionState with _$GameSessionState {
   const factory GameSessionState.initial() = _Initial;
   const factory GameSessionState.nextTick({required GameSession gameSession}) =
       _NextTick;
-  const factory GameSessionState.finished() = _Finished;
+  const factory GameSessionState.over({required int score}) = _Over;
 }

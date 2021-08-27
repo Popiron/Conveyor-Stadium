@@ -4,6 +4,7 @@ import 'package:conveyor_stadium/presentation/common/background.dart';
 import 'package:conveyor_stadium/presentation/gameplay/gameplay_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:conveyor_stadium/presentation/common/widget_list_utils.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../typography.dart';
 
@@ -34,7 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 onTap: () {},
                 child: Container(
                   height: 58,
-                  child: Image.asset("assets/images/button_results.png"),
+                  child: Image.asset('button_results_path'.tr()),
                 ),
               ),
               GestureDetector(
@@ -43,14 +44,14 @@ class _MenuScreenState extends State<MenuScreen> {
                 },
                 child: Container(
                   height: 58,
-                  child: Image.asset("assets/images/button_play.png"),
+                  child: Image.asset('button_play_path'.tr()),
                 ),
               ),
               GestureDetector(
                 onTap: () {},
                 child: Container(
                   height: 58,
-                  child: Image.asset("assets/images/button_settings.png"),
+                  child: Image.asset('button_settings_path'.tr()),
                 ),
               ),
             ].separated(
@@ -65,7 +66,7 @@ class _MenuScreenState extends State<MenuScreen> {
             onTap: () {},
             child: Container(
               height: 58,
-              child: Image.asset("assets/images/button_privacy_policy.png"),
+              child: Image.asset('button_privacy_policy_path'.tr()),
             ),
           ),
         ],

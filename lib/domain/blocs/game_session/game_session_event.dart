@@ -6,4 +6,5 @@ class GameSessionEvent with _$GameSessionEvent {
   const factory GameSessionEvent.changedDirection(int id, Direction direction) =
       _ChangedDirection;
   const factory GameSessionEvent.ticked() = _Ticked;
+  const factory GameSessionEvent.finished() = _Finished;
 }

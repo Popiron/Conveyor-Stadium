@@ -8,11 +8,11 @@ import 'privacy_policy/privacy_police_screen.dart';
   replaceInRouteName: 'Screen,Route',
   routes: <AdaptiveRoute>[
     AdaptiveRoute(
-      page: PrivacyPolicyScreen,
-    ),
-    AdaptiveRoute(
       page: MenuScreen,
       initial: true,
+    ),
+    AdaptiveRoute(
+      page: PrivacyPolicyScreen,
     ),
     AdaptiveRoute(
       page: GamePlayScreen,
