@@ -108,7 +108,9 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                 height: 32,
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  AutoRouter.of(context).push(const ResultsRoute());
+                },
                 child: Container(
                   height: 58,
                   child: Image.asset('button_results_path'.tr()),

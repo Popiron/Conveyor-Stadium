@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:conveyor_stadium/presentation/gameplay/gameplay_screen.dart';
+import 'package:conveyor_stadium/presentation/results/results_screen.dart';
+import 'package:conveyor_stadium/presentation/settings/settings_screen.dart';
 
 import 'menu/menu_screen.dart';
 import 'privacy_policy/privacy_police_screen.dart';
@@ -16,6 +18,12 @@ import 'privacy_policy/privacy_police_screen.dart';
     ),
     AdaptiveRoute(
       page: GamePlayScreen,
+    ),
+    AdaptiveRoute(
+      page: ResultsScreen,
+    ),
+    AdaptiveRoute(
+      page: SettingsScreen,
     ),
   ],
 )

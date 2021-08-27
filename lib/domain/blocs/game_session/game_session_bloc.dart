@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:conveyor_stadium/domain/interfaces/scores_repository.dart';
 import 'package:conveyor_stadium/domain/models/direction.dart';
 import 'package:conveyor_stadium/domain/models/fan.dart';
 import 'package:conveyor_stadium/domain/models/fan_type.dart';
@@ -15,7 +16,8 @@ part 'game_session_bloc.freezed.dart';
 
 @injectable
 class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
-  GameSessionBloc() : super(_Initial());
+  GameSessionBloc(this._scoresRepository) : super(_Initial());
+  final ScoresRepository _scoresRepository;
   late GameSession _gameSession;
   @override
   Stream<GameSessionState> mapEventToState(
@@ -75,6 +77,11 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
                 stadiums: [..._gameSession.stadiums]));
       }
     }, finished: () async* {
+      final topScores = await _scoresRepository.getScores();
+      if (!topScores.scores.contains(_gameSession.score)) {
+        topScores.scores.add(_gameSession.score);
+        await _scoresRepository.saveScores(topScores);
+      }
       yield _Over(score: _gameSession.score);
     });
   }

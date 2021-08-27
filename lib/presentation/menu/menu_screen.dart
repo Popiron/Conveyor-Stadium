@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:conveyor_stadium/configure_dependencies.dart';
+import 'package:conveyor_stadium/domain/blocs/music/music_bloc.dart';
 import 'package:conveyor_stadium/presentation/app_router.gr.dart';
 import 'package:conveyor_stadium/presentation/common/background.dart';
 import 'package:conveyor_stadium/presentation/gameplay/gameplay_screen.dart';
@@ -32,7 +34,9 @@ class _MenuScreenState extends State<MenuScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  AutoRouter.of(context).push(const ResultsRoute());
+                },
                 child: Container(
                   height: 58,
                   child: Image.asset('button_results_path'.tr()),
@@ -40,7 +44,7 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  AutoRouter.of(context).push(GamePlayRoute());
+                  AutoRouter.of(context).push(const GamePlayRoute());
                 },
                 child: Container(
                   height: 58,
@@ -48,7 +52,9 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  AutoRouter.of(context).push(const SettingsRoute());
+                },
                 child: Container(
                   height: 58,
                   child: Image.asset('button_settings_path'.tr()),
@@ -63,7 +69,9 @@ class _MenuScreenState extends State<MenuScreen> {
             height: 60.92,
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              AutoRouter.of(context).push(const PrivacyPolicyRoute());
+            },
             child: Container(
               height: 58,
               child: Image.asset('button_privacy_policy_path'.tr()),
