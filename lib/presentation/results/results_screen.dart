@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:conveyor_stadium/configure_dependencies.dart';
-import 'package:conveyor_stadium/domain/blocs/top_scores/top_scores_bloc.dart';
-import 'package:conveyor_stadium/domain/models/top_scores.dart';
+import 'package:conveyor_stadium/domain/blocs/results/results_bloc.dart';
 import 'package:conveyor_stadium/presentation/common/background.dart';
 import 'package:conveyor_stadium/presentation/typography.dart';
 import 'package:flutter/widgets.dart';
@@ -18,10 +15,10 @@ class ResultsScreen extends StatefulWidget {
 }
 
 class _ResultsScreenState extends State<ResultsScreen> {
-  final _bloc = getIt.get<TopScoresBloc>();
+  final _bloc = getIt.get<ResultsBloc>();
   @override
   void initState() {
-    _bloc.add(const TopScoresEvent.started());
+    _bloc.add(const ResultEvent.started());
     super.initState();
   }
 
@@ -45,7 +42,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  BlocBuilder<TopScoresBloc, TopScoresState>(
+                  BlocBuilder<ResultsBloc, ResultState>(
                       bloc: _bloc,
                       builder: (context, state) {
                         return state.when(initial: () {

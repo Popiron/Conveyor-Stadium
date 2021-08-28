@@ -7,7 +7,6 @@ import 'package:conveyor_stadium/presentation/typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:conveyor_stadium/presentation/common/widget_list_utils.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -74,15 +73,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 thumbColor: const Color(0xFFFFBB00),
                 thumbShape:
                     const RoundSliderThumbShape(enabledThumbRadius: 15)),
-            child: Slider(
-              value: _sliderValue,
-              onChangeStart: (value) {},
-              onChanged: (value) {
-                setState(() {
-                  _sliderValue = value;
-                  _musicService.changeVolume(value);
-                });
-              },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.36,
+              child: Slider(
+                value: _sliderValue,
+                onChangeStart: (value) {},
+                onChanged: (value) {
+                  setState(() {
+                    _sliderValue = value;
+                    _musicService.changeVolume(value);
+                  });
+                },
+              ),
             ),
           ),
         ),

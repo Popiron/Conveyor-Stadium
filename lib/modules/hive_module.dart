@@ -10,7 +10,7 @@ import 'package:injectable/injectable.dart';
 abstract class HiveModule {
   @preResolve
   Future<HiveClient> get client async {
-    Hive.registerAdapter(TopScoresAdapter());
+    Hive.registerAdapter(ResultsAdapter());
 
     await Hive.initFlutter();
 

@@ -3,25 +3,25 @@ import 'package:conveyor_stadium/domain/interfaces/scores_repository.dart';
 import 'package:conveyor_stadium/domain/models/top_scores.dart';
 import 'package:injectable/injectable.dart';
 
-@Singleton(as: ScoresRepository)
-class ScoresRepositoryImpl implements ScoresRepository {
+@Singleton(as: ResultsRepository)
+class ResultsRepositoryImpl implements ResultsRepository {
   final HiveClient _hiveClient;
 
-  ScoresRepositoryImpl(this._hiveClient);
+  ResultsRepositoryImpl(this._hiveClient);
 
   @override
-  Future<TopScores> getScores() async {
-    final scores = _hiveClient.topScoresBox.values;
-    if (scores.isNotEmpty) {
-      return _hiveClient.topScoresBox.values.first;
+  Future<Results> getResults() async {
+    final results = _hiveClient.resultsBox.values;
+    if (results.isNotEmpty) {
+      return _hiveClient.resultsBox.values.first;
     } else {
-      await saveScores(TopScores([0, 0, 0]));
-      return _hiveClient.topScoresBox.values.first;
+      await saveResults(Results([0, 0, 0]));
+      return _hiveClient.resultsBox.values.first;
     }
   }
 
   @override
-  Future<void> saveScores(TopScores scores) {
-    return _hiveClient.topScoresBox.put(HiveClient.key, scores);
+  Future<void> saveResults(Results results) {
+    return _hiveClient.resultsBox.put(HiveClient.key, results);
   }
 }

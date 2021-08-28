@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:conveyor_stadium/configure_dependencies.dart';
 import 'package:conveyor_stadium/domain/blocs/game_session/game_session_bloc.dart';
+import 'package:conveyor_stadium/domain/models/game_session.dart';
 import 'package:conveyor_stadium/presentation/app_router.gr.dart';
 import 'package:conveyor_stadium/presentation/common/background.dart';
 import 'package:conveyor_stadium/presentation/gameplay/widgets/game_bar.dart';
@@ -48,8 +47,7 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                 orElse: () => BackgroundType.clear),
             child: SafeArea(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
+                padding: const EdgeInsets.only(left: 20.0, right: 20, top: 16),
                 child: Column(
                   children: [GameBar(), _game()].separated(
                       separator: () => const SizedBox(
@@ -72,71 +70,76 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
         return state.map(initial: (value) {
           return Container();
         }, nextTick: (value) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ...List<StadiumTile>.generate(value.gameSession.stadiums.length,
-                  (i) {
-                if (value.gameSession.fans
-                    .asMap()
-                    .containsKey(value.gameSession.stadiums.length - 1 - i)) {
-                  return StadiumTile(
-                      key: UniqueKey(),
-                      id: i,
-                      stadium: value.gameSession.stadiums[i],
-                      isLast: i == 0,
-                      isFirst: i == value.gameSession.stadiums.length - 1,
-                      fan: value.gameSession
-                          .fans[value.gameSession.stadiums.length - 1 - i]);
-                } else {
-                  return StadiumTile(
-                    id: i,
-                    stadium: value.gameSession.stadiums[i],
-                    isLast: i == 0,
-                    isFirst: i == value.gameSession.stadiums.length - 1,
-                  );
-                }
-              })
-            ],
-          );
+          return _playground(gameSession: value.gameSession);
         }, over: (value) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ScoreBox(
-                score: value.score,
-                size: 60,
-                textStyle: TypographyUtil.baseTextStyle.highlighted(),
-              ),
-              const SizedBox(
-                height: 32,
-              ),
-              GestureDetector(
-                onTap: () {
-                  AutoRouter.of(context).push(const ResultsRoute());
-                },
-                child: Container(
-                  height: 58,
-                  child: Image.asset('button_results_path'.tr()),
-                ),
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              GestureDetector(
-                onTap: () {
-                  AutoRouter.of(context).popUntilRoot();
-                },
-                child: Container(
-                  height: 58,
-                  child: Image.asset('button_menu_path'.tr()),
-                ),
-              ),
-            ],
-          );
-          ;
+          return _endGame(value: value.score);
         });
       },
     ));
+  }
+
+  Widget _playground({required GameSession gameSession}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ...List<StadiumTile>.generate(gameSession.stadiums.length, (i) {
+          if (gameSession.fans
+              .asMap()
+              .containsKey(gameSession.stadiums.length - 1 - i)) {
+            return StadiumTile(
+                key: UniqueKey(),
+                id: i,
+                stadium: gameSession.stadiums[i],
+                isLast: i == 0,
+                isFirst: i == gameSession.stadiums.length - 1,
+                fan: gameSession.fans[gameSession.stadiums.length - 1 - i]);
+          } else {
+            return StadiumTile(
+              id: i,
+              stadium: gameSession.stadiums[i],
+              isLast: i == 0,
+              isFirst: i == gameSession.stadiums.length - 1,
+            );
+          }
+        })
+      ],
+    );
+  }
+
+  Widget _endGame({required int value}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ScoreBox(
+          score: value,
+          size: 60,
+          textStyle: TypographyUtil.baseTextStyle.highlighted(),
+        ),
+        const SizedBox(
+          height: 32,
+        ),
+        GestureDetector(
+          onTap: () {
+            AutoRouter.of(context).push(const ResultsRoute());
+          },
+          child: Container(
+            height: 58,
+            child: Image.asset('button_results_path'.tr()),
+          ),
+        ),
+        const SizedBox(
+          height: 25,
+        ),
+        GestureDetector(
+          onTap: () {
+            AutoRouter.of(context).popUntilRoot();
+          },
+          child: Container(
+            height: 58,
+            child: Image.asset('button_menu_path'.tr()),
+          ),
+        ),
+      ],
+    );
   }
 }

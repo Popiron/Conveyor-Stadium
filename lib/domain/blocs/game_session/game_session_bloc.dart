@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:conveyor_stadium/domain/constants.dart';
 import 'package:conveyor_stadium/domain/interfaces/music_service.dart';
 import 'package:conveyor_stadium/domain/interfaces/scores_repository.dart';
 import 'package:conveyor_stadium/domain/models/direction.dart';
@@ -17,62 +18,32 @@ part 'game_session_bloc.freezed.dart';
 
 @injectable
 class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
-  GameSessionBloc(this._scoresRepository, this._musicService)
-      : super(_Initial());
-  final ScoresRepository _scoresRepository;
+  final ResultsRepository _resultsRepository;
   final MusicService _musicService;
+  GameSessionBloc(this._resultsRepository, this._musicService)
+      : super(_Initial());
   late GameSession _gameSession;
+  final _stadiums = [
+    const Stadium(type: FanType.orange),
+    const Stadium(type: FanType.white),
+    const Stadium(type: FanType.yellow),
+  ];
   @override
   Stream<GameSessionState> mapEventToState(
     GameSessionEvent event,
   ) async* {
     yield* event.when(started: () async* {
-      final stadiums = [
-        const Stadium(type: FanType.orange),
-        const Stadium(type: FanType.white),
-        const Stadium(type: FanType.yellow),
-      ];
-      stadiums.shuffle();
-      _gameSession = GameSession(
-          fans: <Fan?>[Fan.random()],
-          stadiums: stadiums.take(2).toList(),
-          score: 19,
-          hearts: 3);
+      _initGameSession();
       yield _NextTick(gameSession: _gameSession);
-      time(Duration.millisecondsPerSecond * 3, 0.995);
-    }, changedDirection: (id, direction) async* {
-      final fans = [..._gameSession.fans];
-      fans[_gameSession.stadiums.length - 1 - id] =
-          fans[_gameSession.stadiums.length - 1 - id]!
-              .copyWith(direction: direction);
-      _gameSession = _gameSession.copyWith(fans: fans);
+      _gameTime(GAME_TIME, GAME_SPEED);
+    }, changedDirection: (stadiumId, direction) async* {
+      _updateFansDirection(stadiumId, direction);
     }, ticked: () async* {
-      _gameSession.stadiums.forEachIndexed((index, element) {
-        final fanIndex = _gameSession.stadiums.length - 1 - index;
-        if (_gameSession.fans.asMap().containsKey(fanIndex) &&
-            _gameSession.fans[fanIndex] != null) {
-          if (_gameSession.fans[fanIndex]!.direction.isRight) {
-            _gameSession.fans[fanIndex] = null;
-          } else if (_gameSession.fans[fanIndex]!.direction.isLeft) {
-            if (_gameSession.fans[fanIndex]!.type.index == element.type.index) {
-              _addScore();
-            } else {
-              _musicService.reducedOneHeartSound();
-              _gameSession =
-                  _gameSession.copyWith(hearts: _gameSession.hearts - 1);
-            }
-            _gameSession.fans[fanIndex] = null;
-          }
-        }
-      });
+      _checkFanTypes();
       if (_gameSession.hearts == 0) {
         add(const GameSessionEvent.finished());
       } else {
-        final lastFanIndex = _gameSession.stadiums.length - 1;
-        if (_gameSession.fans.asMap().containsKey(lastFanIndex)) {
-          _gameSession.fans.removeLast();
-        }
-        _gameSession.fans.insert(0, Fan.random());
+        _moveQueue();
         yield _NextTick(
             gameSession: GameSession(
                 score: _gameSession.score,
@@ -81,20 +52,58 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
                 stadiums: [..._gameSession.stadiums]));
       }
     }, finished: () async* {
-      final topScores = await _scoresRepository.getScores();
-      if (!topScores.scores.contains(_gameSession.score)) {
-        topScores.scores.add(_gameSession.score);
-        await _scoresRepository.saveScores(topScores);
+      final results = await _resultsRepository.getResults();
+      if (!results.scores.contains(_gameSession.score)) {
+        results.scores.add(_gameSession.score);
+        await _resultsRepository.saveResults(results);
       }
       yield _Over(score: _gameSession.score);
     });
   }
 
-  Future<dynamic> time(int milliseconds, double speedFactor) {
+  void _initGameSession() {
+    _stadiums.shuffle();
+    _gameSession = GameSession(
+        fans: <Fan?>[Fan.random()],
+        stadiums: _stadiums.take(2).toList(),
+        score: 0,
+        hearts: 3);
+  }
+
+  Future<dynamic> _gameTime(int milliseconds, double speedFactor) {
     return Future.delayed(Duration(milliseconds: milliseconds)).then((value) {
       if (milliseconds != 0 && state is! _Finished) {
         add(const _Ticked());
-        time((milliseconds * speedFactor).floor(), speedFactor);
+        _gameTime((milliseconds * speedFactor).floor(), speedFactor);
+      } else {
+        add(const _Finished());
+      }
+    });
+  }
+
+  void _updateFansDirection(int stadiumId, Direction direction) {
+    final fans = [..._gameSession.fans];
+    fans[_gameSession.stadiums.length - 1 - stadiumId] =
+        fans[_gameSession.stadiums.length - 1 - stadiumId]!
+            .copyWith(direction: direction);
+    _gameSession = _gameSession.copyWith(fans: fans);
+  }
+
+  void _checkFanTypes() {
+    _gameSession.stadiums.forEachIndexed((index, element) {
+      final fanIndex = _gameSession.stadiums.length - 1 - index;
+      if (_gameSession.fans.asMap().containsKey(fanIndex) &&
+          _gameSession.fans[fanIndex] != null) {
+        if (_gameSession.fans[fanIndex]!.direction.isRight) {
+          _gameSession.fans[fanIndex] = null;
+        } else if (_gameSession.fans[fanIndex]!.direction.isLeft) {
+          if (_gameSession.fans[fanIndex]!.type.index == element.type.index) {
+            _addScore();
+          } else {
+            _reduceHeart();
+          }
+          _gameSession.fans[fanIndex] = null;
+        }
       }
     });
   }
@@ -110,5 +119,18 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
         _gameSession.stadiums.add(Stadium(type: element));
       });
     }
+  }
+
+  void _reduceHeart() {
+    _musicService.reducedOneHeartSound();
+    _gameSession = _gameSession.copyWith(hearts: _gameSession.hearts - 1);
+  }
+
+  void _moveQueue() {
+    final lastFanIndex = _gameSession.stadiums.length - 1;
+    if (_gameSession.fans.asMap().containsKey(lastFanIndex)) {
+      _gameSession.fans.removeLast();
+    }
+    _gameSession.fans.insert(0, Fan.random());
   }
 }

@@ -6,13 +6,13 @@ import 'package:injectable/injectable.dart';
 
 class HiveClient {
   static const key = "stats";
-  static const _scores = "scores";
+  static const _results = "results";
 
   static final eagerBoxes = [
-    Hive.openBox<TopScores>(_scores),
+    Hive.openBox<Results>(_results),
   ];
 
-  Box<TopScores> get topScoresBox => Hive.box<TopScores>(_scores);
+  Box<Results> get resultsBox => Hive.box<Results>(_results);
 }
 
 // extension FiltersBox on Box<SavedFilters> {
