@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.conveyor_stadium">
+    package="com.c0nveystad">
    <application
-        android:label="conveyor_stadium"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Conveyor Stadium"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

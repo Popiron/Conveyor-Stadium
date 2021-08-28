@@ -14,10 +14,14 @@ class StadiumTile extends StatefulWidget {
   final int id;
   final Stadium stadium;
   final Fan? fan;
+  final bool isLast;
+  final bool isFirst;
   const StadiumTile({
     Key? key,
     required this.id,
     required this.stadium,
+    required this.isLast,
+    required this.isFirst,
     this.fan,
   }) : super(key: key);
 
@@ -48,7 +52,6 @@ class _StadiumTileState extends State<StadiumTile> {
       create: (context) => _bloc,
       child: Expanded(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
@@ -73,55 +76,73 @@ class _StadiumTileState extends State<StadiumTile> {
                 },
                 builder: (context, state) {
                   return Stack(
-                    alignment: Alignment.topCenter,
+                    alignment: Alignment.center,
                     fit: StackFit.expand,
                     children: [
                       if (widget.fan != null)
-                        Positioned(
-                          top: 0.0,
+                        Align(
                           child: GestureDetector(
                             onTap: () {
                               _bloc.add(
                                   const StadiumTileEvent.changedDirection());
                             },
-                            child: Container(
-                              height: 70,
-                              child: Image.asset(widget.fan!.imgPath),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12.0),
+                                  child: Container(
+                                    height: 53,
+                                    child: state.maybeMap(
+                                        directionForward: (_) => !widget.isLast
+                                            ? Image.asset(
+                                                "assets/images/arrow.png")
+                                            : Container(),
+                                        orElse: () => const SizedBox.shrink()),
+                                  ),
+                                ),
+                                if (!widget.isLast)
+                                  const SizedBox(
+                                    height: 18,
+                                  ),
+                                Container(
+                                  height: 70,
+                                  child: Image.asset(widget.fan!.imgPath),
+                                ),
+                                const SizedBox(
+                                  height: 22,
+                                ),
+                                if (widget.isFirst)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 12.0),
+                                    child: Container(
+                                      height: 53,
+                                      child: Image.asset(
+                                          "assets/images/arrow.png"),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ),
-                      Positioned(
-                        bottom: 20.0,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 12.0),
-                          child: Container(
-                            height: 53,
-                            child: Image.asset("assets/images/arrow.png"),
+                      if (widget.fan != null)
+                        state.maybeMap(
+                          directionLeft: (_) => Positioned(
+                            left: 7.0,
+                            child: Container(
+                              height: 30,
+                              child: Image.asset("assets/images/arrow_l.png"),
+                            ),
                           ),
-                        ),
-                      ),
-                      state.maybeMap(
-                        directionLeft: (_) => Positioned(
-                          top: 20,
-                          left: 7.0,
-                          child: Container(
-                            height: 30,
-                            child: Image.asset("assets/images/arrow_l.png"),
+                          directionRight: (_) => Positioned(
+                            right: 7.0,
+                            child: Container(
+                              height: 30,
+                              child: Image.asset("assets/images/arrow_r.png"),
+                            ),
                           ),
+                          orElse: () => const SizedBox.shrink(),
                         ),
-                        orElse: () => const SizedBox.shrink(),
-                      ),
-                      state.maybeMap(
-                        directionRight: (_) => Positioned(
-                          top: 20,
-                          right: 7.0,
-                          child: Container(
-                            height: 30,
-                            child: Image.asset("assets/images/arrow_r.png"),
-                          ),
-                        ),
-                        orElse: () => const SizedBox.shrink(),
-                      ),
                     ],
                   );
                 },

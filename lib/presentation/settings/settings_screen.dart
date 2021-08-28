@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:conveyor_stadium/configure_dependencies.dart';
-import 'package:conveyor_stadium/domain/blocs/music/music_bloc.dart';
+import 'package:conveyor_stadium/domain/interfaces/music_service.dart';
 import 'package:conveyor_stadium/presentation/colors.dart';
 import 'package:conveyor_stadium/presentation/common/background.dart';
 import 'package:conveyor_stadium/presentation/typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:conveyor_stadium/presentation/common/widget_list_utils.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -16,10 +17,11 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final _bloc = getIt.get<MusicBloc>();
+  final _musicService = getIt.get<MusicService>();
+  late double _sliderValue;
   @override
   void initState() {
-    _bloc.add(const MusicEvent.started());
+    _sliderValue = _musicService.getVolume();
     super.initState();
   }
 
@@ -73,10 +75,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 thumbShape:
                     const RoundSliderThumbShape(enabledThumbRadius: 15)),
             child: Slider(
-              value: 30,
-              max: 100.0,
+              value: _sliderValue,
               onChangeStart: (value) {},
-              onChanged: (value) {},
+              onChanged: (value) {
+                setState(() {
+                  _sliderValue = value;
+                  _musicService.changeVolume(value);
+                });
+              },
             ),
           ),
         ),
@@ -88,18 +94,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buttonTrak(trackId: 1, isSelected: true),
-          _buttonTrak(trackId: 2, isSelected: false),
-          _buttonTrak(trackId: 3, isSelected: false),
+          _buttonTrack(
+              trackId: 1, isSelected: _musicService.getPlayingTrackId() == 1),
+          _buttonTrack(
+              trackId: 2, isSelected: _musicService.getPlayingTrackId() == 2),
+          _buttonTrack(
+              trackId: 3, isSelected: _musicService.getPlayingTrackId() == 3),
         ].separated(
             separator: () => const SizedBox(
                   width: 24,
                 )));
   }
 
-  Widget _buttonTrak({required int trackId, required bool isSelected}) {
+  Widget _buttonTrack({required int trackId, required bool isSelected}) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        setState(() {
+          _musicService.playTrack(trackId);
+        });
+      },
       child: Column(
         children: [
           Container(

@@ -84,12 +84,16 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                       key: UniqueKey(),
                       id: i,
                       stadium: value.gameSession.stadiums[i],
+                      isLast: i == 0,
+                      isFirst: i == value.gameSession.stadiums.length - 1,
                       fan: value.gameSession
                           .fans[value.gameSession.stadiums.length - 1 - i]);
                 } else {
                   return StadiumTile(
                     id: i,
                     stadium: value.gameSession.stadiums[i],
+                    isLast: i == 0,
+                    isFirst: i == value.gameSession.stadiums.length - 1,
                   );
                 }
               })

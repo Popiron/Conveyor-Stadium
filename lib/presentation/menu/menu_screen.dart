@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:conveyor_stadium/configure_dependencies.dart';
-import 'package:conveyor_stadium/domain/blocs/music/music_bloc.dart';
+import 'package:conveyor_stadium/domain/interfaces/music_service.dart';
 import 'package:conveyor_stadium/presentation/app_router.gr.dart';
 import 'package:conveyor_stadium/presentation/common/background.dart';
 import 'package:conveyor_stadium/presentation/gameplay/gameplay_screen.dart';
@@ -18,9 +18,11 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  //final _service = getIt.get<MusicService>();
   @override
   void initState() {
     super.initState();
+    //_service.playTrack(1);
   }
 
   @override

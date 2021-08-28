@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:conveyor_stadium/domain/interfaces/music_service.dart';
 import 'package:conveyor_stadium/domain/interfaces/scores_repository.dart';
 import 'package:conveyor_stadium/domain/models/direction.dart';
 import 'package:conveyor_stadium/domain/models/fan.dart';
@@ -16,8 +17,10 @@ part 'game_session_bloc.freezed.dart';
 
 @injectable
 class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
-  GameSessionBloc(this._scoresRepository) : super(_Initial());
+  GameSessionBloc(this._scoresRepository, this._musicService)
+      : super(_Initial());
   final ScoresRepository _scoresRepository;
+  final MusicService _musicService;
   late GameSession _gameSession;
   @override
   Stream<GameSessionState> mapEventToState(
@@ -54,6 +57,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
             if (_gameSession.fans[fanIndex]!.type.index == element.type.index) {
               _addScore();
             } else {
+              _musicService.reducedOneHeartSound();
               _gameSession =
                   _gameSession.copyWith(hearts: _gameSession.hearts - 1);
             }
@@ -96,6 +100,7 @@ class GameSessionBloc extends Bloc<GameSessionEvent, GameSessionState> {
   }
 
   void _addScore() {
+    _musicService.gainedOneScoreSound();
     _gameSession = _gameSession.copyWith(score: _gameSession.score + 1);
     if (_gameSession.score == 20) {
       var fan_types = FanType.values.toList();
